@@ -4,6 +4,8 @@ import org.mcwhirter.cfr.model.CFR;
 import org.mcwhirter.cfr.model.Chapter;
 import org.mcwhirter.cfr.model.Document;
 import org.mcwhirter.cfr.model.EmphasizedText;
+import org.mcwhirter.cfr.model.ListItem;
+import org.mcwhirter.cfr.model.OrderedList;
 import org.mcwhirter.cfr.model.Paragraph;
 import org.mcwhirter.cfr.model.Part;
 import org.mcwhirter.cfr.model.Section;
@@ -26,6 +28,8 @@ public interface Visitor {
     void visit(Subpart part) throws Exception;
     void visit(Section section) throws Exception;
     void visit(Paragraph paragraph) throws Exception;
+    void visit(OrderedList list) throws Exception;
+    void visit(ListItem item) throws Exception;
     void visit(Text text) throws Exception;
     void visit(EmphasizedText text) throws Exception;
 }

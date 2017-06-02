@@ -1,8 +1,9 @@
-package org.mcwhirter.cfr.exporter.asciidoc;
+package org.mcwhirter.cfr.exporter;
 
 import java.nio.file.Path;
 import java.util.Stack;
 
+import org.mcwhirter.cfr.exporter.Executable;
 import org.mcwhirter.cfr.model.Identified;
 import org.mcwhirter.cfr.visitor.DefaultVisitor;
 
@@ -11,11 +12,11 @@ import org.mcwhirter.cfr.visitor.DefaultVisitor;
  */
 public class BaseVisitor extends DefaultVisitor {
 
-    BaseVisitor(Path dir) {
+    protected BaseVisitor(Path dir) {
         this.dir = dir;
     }
 
-    void context(Identified identified, Executable e) throws Exception {
+    protected void context(Identified identified, Executable e) throws Exception {
         try {
             this.context.push( identified );
             e.run();
@@ -24,7 +25,7 @@ public class BaseVisitor extends DefaultVisitor {
         }
     }
 
-    Path filename() {
+    protected Path filename() {
         Path file = this.dir;
         for (Identified identified : this.context) {
             file = file.resolve( identified.id() );
@@ -33,7 +34,7 @@ public class BaseVisitor extends DefaultVisitor {
         return file.resolve( "index.adoc");
     }
 
-    String link() {
+    protected String link() {
         StringBuilder link = new StringBuilder();
         for (Identified identified : this.context) {
             link.append( "/" + identified.id() );

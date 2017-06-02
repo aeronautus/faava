@@ -5,7 +5,12 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import org.mcwhirter.cfr.exporter.BaseVisitor;
+import org.mcwhirter.cfr.exporter.Executable;
+import org.mcwhirter.cfr.model.Block;
 import org.mcwhirter.cfr.model.EmphasizedText;
+import org.mcwhirter.cfr.model.ListItem;
+import org.mcwhirter.cfr.model.OrderedList;
 import org.mcwhirter.cfr.model.Paragraph;
 import org.mcwhirter.cfr.model.Part;
 import org.mcwhirter.cfr.model.Section;
@@ -127,20 +132,45 @@ public class AsciiDocVisitor extends BaseVisitor {
                 header("Reserved");
             } else {
                 headedBlock(section.getSubject(), () -> {
-                    for (Paragraph e : section.getParagraphs()) {
+                    for (Block e : section.getBlocks()) {
                         e.accept(this);
                     }
                 });
             }
         });
-        super.visit(section);
     }
 
     @Override
     public void visit(Paragraph paragraph) throws Exception {
         super.visit(paragraph);
         println();
-        println();
+        if ( this.listDepth == 0 ) {
+            println();
+        }
+    }
+
+    private int listDepth = 0;
+
+    @Override
+    public void visit(OrderedList list) throws Exception {
+        try {
+            ++this.listDepth;
+            super.visit(list);
+        } finally {
+            --this.listDepth;
+        }
+        if ( this.listDepth == 0 ) {
+            println();
+        }
+    }
+
+    @Override
+    public void visit(ListItem item) throws Exception {
+        for (int i = 0; i < this.listDepth; ++i) {
+            print(".");
+        }
+        print(" ");
+        super.visit(item);
     }
 
     @Override

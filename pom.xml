@@ -13,10 +13,22 @@
      <maven.compiler.source>1.8</maven.compiler.source>
      <maven.compiler.target>1.8</maven.compiler.target>
      <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-     <version.wildfly-swarm>2017.3.3</version.wildfly-swarm>
-     <fabric8.maven.plugin.version>3.1.92</fabric8.maven.plugin.version>
+    <version.fest-assert>1.4</version.fest-assert>
+    <version.junit>4.12</version.junit>
   </properties>
   <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>${version.junit}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.easytesting</groupId>
+      <artifactId>fest-assert</artifactId>
+      <version>${version.fest-assert}</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>

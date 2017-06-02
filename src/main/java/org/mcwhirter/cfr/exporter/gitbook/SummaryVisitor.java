@@ -1,12 +1,12 @@
-package org.mcwhirter.cfr.exporter.asciidoc;
+package org.mcwhirter.cfr.exporter.gitbook;
 
 import java.io.FileOutputStream;
 import java.nio.file.Path;
 
+import org.mcwhirter.cfr.exporter.BaseVisitor;
 import org.mcwhirter.cfr.model.Document;
 import org.mcwhirter.cfr.model.Part;
 import org.mcwhirter.cfr.model.Subpart;
-import org.mcwhirter.cfr.visitor.DefaultVisitor;
 
 /**
  * Created by bob on 6/1/17.
@@ -14,8 +14,6 @@ import org.mcwhirter.cfr.visitor.DefaultVisitor;
 public class SummaryVisitor extends BaseVisitor {
 
     StringBuilder output = new StringBuilder();
-
-    private int headerDepth = 0;
 
     public SummaryVisitor(Path dir) {
         super(dir);

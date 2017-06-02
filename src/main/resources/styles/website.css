@@ -1,0 +1,12 @@
+
+.markdown-section ol {
+  list-style-type: lower-alpha;
+}
+
+.markdown-section ol ol {
+  list-style-type: decimal;
+}
+
+.markdown-section ol ol ol {
+  list-style-type: lower-roman;
+}

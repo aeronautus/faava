@@ -5,7 +5,7 @@ import java.io.FileReader;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 
-import org.mcwhirter.cfr.exporter.asciidoc.AsciiDocExporter;
+import org.mcwhirter.cfr.exporter.gitbook.GitBookExporter;
 import org.mcwhirter.cfr.model.Document;
 import org.mcwhirter.cfr.parser.DocumentParser;
 
@@ -21,7 +21,7 @@ public class Main {
         DocumentParser parser = new DocumentParser();
         Document doc = parser.parse(eventReader);
 
-        AsciiDocExporter exporter = new AsciiDocExporter();
+        GitBookExporter exporter = new GitBookExporter();
         exporter.export(doc);
     }
 }

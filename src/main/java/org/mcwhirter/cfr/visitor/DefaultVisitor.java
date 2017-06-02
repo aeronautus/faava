@@ -1,11 +1,12 @@
 package org.mcwhirter.cfr.visitor;
 
-import java.io.IOException;
-
+import org.mcwhirter.cfr.model.Block;
 import org.mcwhirter.cfr.model.CFR;
 import org.mcwhirter.cfr.model.Chapter;
 import org.mcwhirter.cfr.model.Document;
 import org.mcwhirter.cfr.model.EmphasizedText;
+import org.mcwhirter.cfr.model.ListItem;
+import org.mcwhirter.cfr.model.OrderedList;
 import org.mcwhirter.cfr.model.Paragraph;
 import org.mcwhirter.cfr.model.Part;
 import org.mcwhirter.cfr.model.Section;
@@ -63,7 +64,7 @@ public class DefaultVisitor implements Visitor {
     }
 
     public void visit(Section section) throws Exception {
-        for (Paragraph e : section.getParagraphs()) {
+        for (Block e : section.getBlocks()) {
             e.accept(this);
         }
     }
@@ -72,6 +73,21 @@ public class DefaultVisitor implements Visitor {
     public void visit(Paragraph paragraph) throws Exception {
         for (Text e : paragraph.getTexts()) {
             e.accept(this);
+        }
+    }
+
+    @Override
+    public void visit(OrderedList list) throws Exception {
+        for (ListItem e : list.getItems()) {
+            e.accept(this);
+        }
+    }
+
+    @Override
+    public void visit(ListItem item) throws Exception {
+        item.getParagraph().accept(this);
+        if ( item.getSublist() != null ) {
+            item.getSublist().accept(this);
         }
     }
 

@@ -39,12 +39,12 @@ public class Section implements BaseModel, Identified {
         return this.reserved;
     }
 
-    public void addParagraph(Paragraph paragraph) {
-        this.paragraphs.add(paragraph);
+    public void addBlock(Block block) {
+        this.blocks.add(block);
     }
 
-    public List<Paragraph> getParagraphs() {
-        return this.paragraphs;
+    public List<Block> getBlocks() {
+        return this.blocks;
     }
 
     @Override
@@ -60,5 +60,5 @@ public class Section implements BaseModel, Identified {
 
     private boolean reserved;
 
-    private List<Paragraph> paragraphs = new ArrayList<>();
+    private List<Block> blocks = new ArrayList<>();
 }

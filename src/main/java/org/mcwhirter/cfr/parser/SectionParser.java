@@ -9,7 +9,7 @@ public class SectionParser extends Parser<Section> {
 
     public SectionParser() {
         super(Tags.SECTION, Section.class);
-        register(new ParagraphParser(), Section::addParagraph);
+        register(new ParagraphParser(), Section::addBlock);
         register(Tags.SECTNO, Section::setSectionNumber);
         register(Tags.SUBJECT, Section::setSubject);
         register(Tags.RESERVED, (section, txt) -> section.setReserved(true));
