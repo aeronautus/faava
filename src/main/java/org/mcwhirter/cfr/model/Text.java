@@ -11,6 +11,10 @@ public class Text implements BaseModel {
         this.text = text;
     }
 
+    public void append(String text) {
+        this.text = this.text + text;
+    }
+
     @Override
     public void accept(Visitor visitor) throws Exception {
         visitor.visit( this );

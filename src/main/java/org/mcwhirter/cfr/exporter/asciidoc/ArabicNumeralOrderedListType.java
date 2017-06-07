@@ -1,14 +1,12 @@
 package org.mcwhirter.cfr.exporter.asciidoc;
 
-import java.util.List;
-
 /**
  * Created by bob on 6/2/17.
  */
-public class ArabicNumeralListMatcher extends ListMatcher {
+public class ArabicNumeralOrderedListType extends OrderedListType {
 
-    public ArabicNumeralListMatcher(ListMatcher nextDeeper) {
-        super(nextDeeper);
+    public ArabicNumeralOrderedListType() {
+        super("arabic");
     }
 
     @Override

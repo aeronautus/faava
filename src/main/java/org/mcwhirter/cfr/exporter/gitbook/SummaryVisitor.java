@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import org.mcwhirter.cfr.exporter.BaseVisitor;
 import org.mcwhirter.cfr.model.Document;
 import org.mcwhirter.cfr.model.Part;
+import org.mcwhirter.cfr.model.Section;
 import org.mcwhirter.cfr.model.Subpart;
 
 /**
@@ -34,13 +35,7 @@ public class SummaryVisitor extends BaseVisitor {
 
     @Override
     public void visit(Document doc) throws Exception {
-        println("# Summary");
-        println();
         super.visit(doc);
-        Path summary = this.dir.resolve("SUMMARY.md");
-        try (FileOutputStream out = new FileOutputStream(summary.toFile())) {
-            out.write(this.output.toString().getBytes());
-        }
     }
 
     @Override
@@ -48,15 +43,20 @@ public class SummaryVisitor extends BaseVisitor {
         if (part.getTitle() == null) {
             return;
         }
+
+        println("# Summary");
+        println();
+
         context(part, () -> {
-            if (part.getSubparts().isEmpty()) {
-                println("* [" + part.id() + " " + part.getTitle() + "](" + link() + ")");
-            } else {
-                println();
-                println("### " + part.id() + " " + part.getTitle() + "");
-            }
+            println("### " + part.id() + " " + part.getTitle() + "");
             super.visit(part);
+            println();
         });
+
+        Path summary = this.dir.resolve("SUMMARY.md");
+        try (FileOutputStream out = new FileOutputStream(summary.toFile())) {
+            out.write(this.output.toString().getBytes());
+        }
     }
 
     public void visit(Subpart subpart) throws Exception {
@@ -64,8 +64,21 @@ public class SummaryVisitor extends BaseVisitor {
             return;
         }
         context(subpart, () -> {
-            println("* [" + subpart.id() + " " + subpart.getTitle() + "](" + link() + ")");
+            println("#### " + subpart.id() + " " + subpart.getTitle() + "");
+            super.visit(subpart);
+            println();
         });
     }
 
+    @Override
+    public void visit(Section section) throws Exception {
+        context(section, () -> {
+            if ( section.isReserved() ) {
+                println("* [" + section.id() + " - Reserved](" + link() + ")");
+            } else {
+                println("* [" + section.id() + " - " + section.getSubject() + "](" + link() + ")");
+            }
+            super.visit(section);
+        });
+    }
 }

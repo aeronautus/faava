@@ -1,5 +1,7 @@
 {
-  "lunr": {
-    "maxIndexSize": 1000000000
-  }
+  "gitbook": "4.0.0-alpha.6",
+  "plugins": [
+    "-lunr",
+    "-livereload"
+  ]
 }

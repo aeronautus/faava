@@ -5,7 +5,7 @@ import java.util.TreeMap;
 /**
  * Created by bob on 6/2/17.
  */
-public class RomanNumeralListMatcher extends ListMatcher {
+public class RomanNumeralOrderedListType extends OrderedListType {
 
     private final static TreeMap<Integer, String> map = new TreeMap<Integer, String>();
 
@@ -22,8 +22,8 @@ public class RomanNumeralListMatcher extends ListMatcher {
         map.put(1, "i");
     }
 
-    public RomanNumeralListMatcher(ListMatcher nextDeeper) {
-        super(nextDeeper);
+    public RomanNumeralOrderedListType() {
+        super("lowerroman");
     }
 
     private final static String toRoman(int number) {

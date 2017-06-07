@@ -1,12 +1,16 @@
 
-.markdown-section ol {
+.markdown-section ol.loweralpha {
   list-style-type: lower-alpha;
 }
 
-.markdown-section ol ol {
+.markdown-section ol.upperalpha {
+  list-style-type: upper-alpha;
+}
+
+.markdown-section ol.arabic {
   list-style-type: decimal;
 }
 
-.markdown-section ol ol ol {
+.markdown-section ol.lowerroman {
   list-style-type: lower-roman;
 }

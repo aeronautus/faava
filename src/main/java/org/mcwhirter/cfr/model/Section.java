@@ -23,11 +23,11 @@ public class Section implements BaseModel, Identified {
         return this.sectionNumber;
     }
 
-    public void setSubject(String subject) {
+    public void setSubject(Paragraph subject) {
         this.subject = subject;
     }
 
-    public String getSubject() {
+    public Paragraph getSubject() {
         return this.subject;
     }
 
@@ -56,7 +56,7 @@ public class Section implements BaseModel, Identified {
 
     private String sectionNumber;
 
-    private String subject;
+    private Paragraph subject;
 
     private boolean reserved;
 

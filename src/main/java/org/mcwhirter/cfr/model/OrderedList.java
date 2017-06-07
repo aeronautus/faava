@@ -3,7 +3,7 @@ package org.mcwhirter.cfr.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.mcwhirter.cfr.exporter.asciidoc.ListMatcher;
+import org.mcwhirter.cfr.exporter.asciidoc.OrderedListType;
 import org.mcwhirter.cfr.visitor.Visitor;
 
 /**
@@ -11,38 +11,54 @@ import org.mcwhirter.cfr.visitor.Visitor;
  */
 public class OrderedList implements BaseModel, Block {
 
-    public OrderedList() {
-        this(null);
+    public OrderedList(OrderedListType type) {
+        this(type, null);
     }
 
-    public OrderedList(OrderedList parent) {
+    public OrderedList(OrderedListType type, OrderedList parent) {
+        this.type = type;
         this.parent = parent;
-        this.matcher = ListMatcher.forDepth(depth());
     }
 
     public OrderedList getParent() {
         return this.parent;
     }
 
-    public int depth() {
-        if (this.parent == null) {
-            return 0;
-        }
-        return 1 + this.parent.depth();
+    public OrderedListType getType() {
+        return this.type;
+    }
+
+    public String toString() {
+        return "[ol: " + this.type.getClass().getSimpleName() + "]";
     }
 
     public OrderedList insert(Paragraph para) {
-        ListMatcher next = this.matcher.getNextDeeper();
-        if (next != null && next.isNext(0, para.asSimpleString())) {
-            OrderedList list = new OrderedList(this);
-            list.addItem(new ListItem(para));
-            this.items.get(this.items.size() - 1).setSublist(list);
-            return list;
+
+        if (this.type.isNext(this.items.size(), para.asSimpleString())) {
+            Paragraph[] paras = burst(this.type, para);
+            if (paras == null) {
+                this.items.add(new ListItem(para));
+                return this;
+            } else {
+                this.items.add(new ListItem(paras[0]));
+                return insert(paras[1]);
+            }
         }
 
-        if (this.matcher.isNext(this.items.size(), para.asSimpleString())) {
-            this.items.add(new ListItem(para));
-            return this;
+        OrderedListType next = OrderedListType.nextType(this.type, para.asSimpleString());
+        if (next != null) {
+            OrderedList list = new OrderedList(next, this);
+            Paragraph[] paras = burst(next, para);
+            if (paras == null) {
+                list.addItem(new ListItem(para));
+                this.items.get(this.items.size() - 1).setSublist(list);
+                return list;
+            } else {
+                list.addItem(new ListItem(paras[0]));
+                this.items.get(this.items.size() - 1).setSublist(list);
+                OrderedList result = list.insert(paras[1]);
+                return result;
+            }
         }
 
         if (this.parent != null) {
@@ -50,6 +66,25 @@ public class OrderedList implements BaseModel, Block {
         }
 
         return null;
+    }
+
+    Paragraph[] burst(OrderedListType type, Paragraph orig) {
+        List<Text> texts = orig.getTexts();
+
+        Paragraph[] paras = null;
+
+        for (int i = 1; i < texts.size(); ++i) {
+            if (OrderedListType.nextType(type, texts.get(i).toString().trim()) != null) {
+                paras = new Paragraph[2];
+                paras[0] = new Paragraph();
+                paras[0].setTexts(texts.subList(0, i));
+                paras[1] = new Paragraph();
+                paras[1].setTexts(texts.subList(i, texts.size()));
+                break;
+            }
+        }
+
+        return paras;
     }
 
     public void addItem(ListItem item) {
@@ -65,7 +100,7 @@ public class OrderedList implements BaseModel, Block {
         visitor.visit(this);
     }
 
-    private ListMatcher matcher;
+    private OrderedListType type;
 
     private OrderedList parent;
 

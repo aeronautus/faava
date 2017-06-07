@@ -7,6 +7,7 @@ import java.nio.file.Path;
 
 import org.mcwhirter.cfr.exporter.BaseVisitor;
 import org.mcwhirter.cfr.exporter.Executable;
+import org.mcwhirter.cfr.exporter.gitbook.SummaryVisitor;
 import org.mcwhirter.cfr.model.Block;
 import org.mcwhirter.cfr.model.EmphasizedText;
 import org.mcwhirter.cfr.model.ListItem;
@@ -53,9 +54,6 @@ public class AsciiDocVisitor extends BaseVisitor {
 
             line += " ";
             println(line + text);
-            if (this.headerDepth == 1) {
-                println(":toc:");
-            }
             println();
         } finally {
             --this.headerDepth;
@@ -99,15 +97,28 @@ public class AsciiDocVisitor extends BaseVisitor {
             return;
         }
         context(part, () -> {
-            if (part.getSubparts().isEmpty()) {
+            delete(partDir(), false);
+            if (!part.getSections().isEmpty()) {
                 file(() -> {
                     headedBlock(part.getTitle(), () -> {
-                        super.visit(part);
+                        for (Section section : part.getSections()) {
+                            section.accept(this);
+                        }
                     });
                 });
-            } else {
-                super.visit(part);
             }
+            for (Subpart subpart : part.getSubparts()) {
+                subpart.accept(this);
+            }
+            //super.visit(part);
+
+            SummaryVisitor summary = new SummaryVisitor(partDir());
+            part.accept(summary);
+
+            emit(dir, "README.md");
+            emit(dir, "book.json");
+            emit(dir, "styles/website.css");
+            emit(dir, ".gitignore");
         });
     }
 
@@ -117,26 +128,46 @@ public class AsciiDocVisitor extends BaseVisitor {
             return;
         }
         context(subpart, () -> {
-            file(() -> {
-                headedBlock(subpart.getTitle(), () -> {
-                    super.visit(subpart);
-                });
-            });
+            //file(() -> {
+            //headedBlock(subpart.getTitle(), () -> {
+            super.visit(subpart);
+            //});
+            //});
+            //super.visit(subpart);
         });
+    }
+
+    String inline(Paragraph p) {
+        StringBuilder str = new StringBuilder();
+        for (Text text : p.getTexts()) {
+            if (text instanceof EmphasizedText) {
+                str.append("*").append(text.toString()).append("*");
+            } else {
+                str.append(text.toString());
+            }
+        }
+
+        return str.toString();
     }
 
     @Override
     public void visit(Section section) throws Exception {
-        headedBlock(section.getSectionNumber(), () -> {
-            if (section.isReserved()) {
-                header("Reserved");
-            } else {
-                headedBlock(section.getSubject(), () -> {
-                    for (Block e : section.getBlocks()) {
-                        e.accept(this);
-                    }
-                });
-            }
+        context(section, () -> {
+            file(() -> {
+                if (section.isReserved()) {
+                    headedBlock(section.getSectionNumber() + " - Reserved", () -> {
+                        println();
+                        println("Reserved");
+                        println();
+                    });
+                } else {
+                    headedBlock(section.getSectionNumber() + " - " + inline(section.getSubject()), () -> {
+                        for (Block e : section.getBlocks()) {
+                            e.accept(this);
+                        }
+                    });
+                }
+            });
         });
     }
 
@@ -144,7 +175,7 @@ public class AsciiDocVisitor extends BaseVisitor {
     public void visit(Paragraph paragraph) throws Exception {
         super.visit(paragraph);
         println();
-        if ( this.listDepth == 0 ) {
+        if (this.listDepth == 0) {
             println();
         }
     }
@@ -155,11 +186,12 @@ public class AsciiDocVisitor extends BaseVisitor {
     public void visit(OrderedList list) throws Exception {
         try {
             ++this.listDepth;
+            println("[" + list.getType().getName() + "]");
             super.visit(list);
         } finally {
             --this.listDepth;
         }
-        if ( this.listDepth == 0 ) {
+        if (this.listDepth == 0) {
             println();
         }
     }

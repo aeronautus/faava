@@ -49,11 +49,11 @@ public class DefaultVisitor implements Visitor {
     }
 
     public void visit(Part part) throws Exception {
-        for (Subpart subpart : part.getSubparts()) {
-            subpart.accept(this);
-        }
         for (Section e : part.getSections()) {
             e.accept(this);
+        }
+        for (Subpart subpart : part.getSubparts()) {
+            subpart.accept(this);
         }
     }
 

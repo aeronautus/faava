@@ -55,7 +55,6 @@ public abstract class Parser<T> {
 
         while (reader.hasNext()) {
             XMLEvent event = reader.nextEvent();
-            //System.err.println(this.getClass().getSimpleName() + " starting: " + event);
 
             if (event.isStartElement()) {
                 QName name = event.asStartElement().getName();

@@ -1,5 +1,6 @@
 package org.mcwhirter.cfr.parser;
 
+import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
@@ -11,10 +12,10 @@ import org.mcwhirter.cfr.model.Text;
 /**
  * Created by bob on 5/31/17.
  */
-public class ParagraphParser extends Parser<Paragraph> {
+public class TextParser extends Parser<Paragraph> {
 
-    public ParagraphParser() {
-        super(Tags.P, Paragraph.class);
+    public TextParser(QName tag) {
+        super(tag, Paragraph.class);
     }
 
     @Override

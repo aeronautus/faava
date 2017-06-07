@@ -11,7 +11,7 @@ public class Document implements BaseModel {
         this.cfr = cfr;
     }
 
-    public BaseModel getCFR() {
+    public CFR getCFR() {
         return this.cfr;
     }
 

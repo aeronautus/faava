@@ -7,11 +7,11 @@ import static org.fest.assertions.Assertions.assertThat;
 /**
  * Created by bob on 6/2/17.
  */
-public class RomanNumeralListMatcherTest {
+public class RomanNumeralOrderedListTypeTest {
 
     @Test
     public void testAll() {
-        RomanNumeralListMatcher matcher = new RomanNumeralListMatcher(null);
+        RomanNumeralOrderedListType matcher = new RomanNumeralOrderedListType();
 
         assertThat( matcher.isNext( 0, "(i)")).isTrue();
         assertThat( matcher.isNext( 0, "(I)")).isFalse();

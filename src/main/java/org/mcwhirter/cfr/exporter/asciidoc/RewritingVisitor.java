@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.mcwhirter.cfr.model.Block;
-import org.mcwhirter.cfr.model.ListItem;
 import org.mcwhirter.cfr.model.OrderedList;
 import org.mcwhirter.cfr.model.Paragraph;
 import org.mcwhirter.cfr.model.Section;
@@ -31,21 +30,22 @@ public class RewritingVisitor extends DefaultVisitor {
                 if (currentList != null) {
                     OrderedList result = currentList.insert((Paragraph) block);
                     if (result == null) {
+                        currentList = null;
                         rewritten.add(block);
                     } else if (result != currentList) {
                         currentList = result;
                     }
                 } else {
-                    if (ListMatcher.LOWERCASE_ALPHABET.isNext(0, ((Paragraph) block).asSimpleString())) {
-                        currentList = new OrderedList();
-                        currentList.addItem(new ListItem((Paragraph) block));
+                    OrderedListType listType = OrderedListType.nextType(null, ((Paragraph) block).asSimpleString());
+                    if (listType != null) {
+                        currentList = new OrderedList(listType);
                         rewritten.add(currentList);
+                        currentList = currentList.insert((Paragraph) block);
                     } else {
                         rewritten.add(block);
                     }
                 }
             } else {
-                //System.err.println( "adding non-para block: " + block);
                 rewritten.add(block);
             }
         }

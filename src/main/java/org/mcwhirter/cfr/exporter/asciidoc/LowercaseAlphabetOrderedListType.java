@@ -3,10 +3,10 @@ package org.mcwhirter.cfr.exporter.asciidoc;
 /**
  * Created by bob on 6/2/17.
  */
-public class LowercaseAlphabetListMatcher extends ListMatcher {
+public class LowercaseAlphabetOrderedListType extends OrderedListType {
 
-    public LowercaseAlphabetListMatcher(ListMatcher nextDeeper) {
-        super( nextDeeper );
+    public LowercaseAlphabetOrderedListType() {
+        super("loweralpha");
     }
 
     @Override
