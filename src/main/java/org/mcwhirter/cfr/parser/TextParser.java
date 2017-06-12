@@ -19,7 +19,7 @@ public class TextParser extends Parser<Paragraph> {
     }
 
     @Override
-    public Paragraph parse(XMLEventReader reader) throws XMLStreamException {
+    public Paragraph parse(XMLEvent trigger, XMLEventReader reader) throws XMLStreamException {
         Paragraph para = createObject();
 
         int depth = 1;

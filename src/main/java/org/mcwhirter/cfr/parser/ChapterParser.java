@@ -9,7 +9,7 @@ public class ChapterParser extends Parser<Chapter> {
 
     public ChapterParser() {
         super(Tags.CHAPTER, Chapter.class);
-        register(new SubChapterParser(), Chapter::addSubchapter);
+        tag(new SubChapterParser(), Chapter::addSubchapter);
     }
 
 }

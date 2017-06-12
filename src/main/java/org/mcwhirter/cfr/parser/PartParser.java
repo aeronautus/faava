@@ -9,9 +9,9 @@ public class PartParser extends Parser<Part> {
 
     public PartParser() {
         super(Tags.PART, Part.class);
-        register(new SectionParser(), Part::addSection);
-        register(new SubpartParser(), Part::addSubpart);
-        register(Tags.HD, Part::setTitle);
+        tag(new SectionParser(), Part::addSection);
+        tag(new SubpartParser(), Part::addSubpart);
+        tag(Tags.HD, Part::setTitle);
     }
 
 }

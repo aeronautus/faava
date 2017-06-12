@@ -9,9 +9,10 @@ public class SectionParser extends Parser<Section> {
 
     public SectionParser() {
         super(Tags.SECTION, Section.class);
-        register(new TextParser(Tags.P), Section::addBlock);
-        register(Tags.SECTNO, Section::setSectionNumber);
-        register(new TextParser(Tags.SUBJECT), Section::setSubject);
-        register(Tags.RESERVED, (section, txt) -> section.setReserved(true));
+        tag(new TextParser(Tags.P), Section::addBlock);
+        tag(Tags.SECTNO, Section::setSectionNumber);
+        tag(new TextParser(Tags.SUBJECT), Section::setSubject);
+        tag(Tags.RESERVED, (section, txt) -> section.setReserved(true));
+        tag(new TableParser(), Section::addBlock);
     }
 }

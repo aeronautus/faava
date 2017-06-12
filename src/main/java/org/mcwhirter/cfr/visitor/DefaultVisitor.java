@@ -3,15 +3,21 @@ package org.mcwhirter.cfr.visitor;
 import org.mcwhirter.cfr.model.Block;
 import org.mcwhirter.cfr.model.CFR;
 import org.mcwhirter.cfr.model.Chapter;
+import org.mcwhirter.cfr.model.ColumnHeader;
 import org.mcwhirter.cfr.model.Document;
 import org.mcwhirter.cfr.model.EmphasizedText;
 import org.mcwhirter.cfr.model.ListItem;
 import org.mcwhirter.cfr.model.OrderedList;
 import org.mcwhirter.cfr.model.Paragraph;
 import org.mcwhirter.cfr.model.Part;
+import org.mcwhirter.cfr.model.RowEntry;
 import org.mcwhirter.cfr.model.Section;
 import org.mcwhirter.cfr.model.Subchapter;
+import org.mcwhirter.cfr.model.SubjectGroup;
 import org.mcwhirter.cfr.model.Subpart;
+import org.mcwhirter.cfr.model.Table;
+import org.mcwhirter.cfr.model.TableHeader;
+import org.mcwhirter.cfr.model.TableRow;
 import org.mcwhirter.cfr.model.Text;
 import org.mcwhirter.cfr.model.Title;
 
@@ -58,7 +64,17 @@ public class DefaultVisitor implements Visitor {
     }
 
     public void visit(Subpart subpart) throws Exception {
+        for (SubjectGroup e : subpart.getSubjectGroups()) {
+            e.accept(this);
+
+        }
         for (Section e : subpart.getSections()) {
+            e.accept(this);
+        }
+    }
+
+    public void visit(SubjectGroup subjectGroup) throws Exception {
+        for (Section e : subjectGroup.getSections()) {
             e.accept(this);
         }
     }
@@ -86,7 +102,7 @@ public class DefaultVisitor implements Visitor {
     @Override
     public void visit(ListItem item) throws Exception {
         item.getParagraph().accept(this);
-        if ( item.getSublist() != null ) {
+        if (item.getSublist() != null) {
             item.getSublist().accept(this);
         }
     }
@@ -99,5 +115,52 @@ public class DefaultVisitor implements Visitor {
     @Override
     public void visit(EmphasizedText text) throws Exception {
 
+    }
+
+    @Override
+    public void visit(Table table) throws Exception {
+        TableHeader header = table.getHeader();
+
+        if ( header != null ) {
+            header.accept(this);
+        }
+
+        for (TableRow e : table.getRows()) {
+            e.accept(this);
+        }
+    }
+
+    @Override
+    public void visit(TableHeader tableHeader) throws Exception {
+        for (ColumnHeader e : tableHeader.getHeaders()) {
+            e.accept(this);
+        }
+    }
+
+    @Override
+    public void visit(ColumnHeader columnHeader) throws Exception {
+        Paragraph content = columnHeader.getContent();
+        if (content != null) {
+            content.accept(this);
+        }
+
+        for (ColumnHeader e : columnHeader.getHeaders()) {
+            e.accept(this);
+        }
+    }
+
+    @Override
+    public void visit(TableRow tableRow) throws Exception {
+        for (RowEntry e : tableRow.getEntries()) {
+            e.accept(this);
+        }
+    }
+
+    @Override
+    public void visit(RowEntry rowEntry) throws Exception {
+        Paragraph content = rowEntry.getContent();
+        if (content != null) {
+            content.accept(this);
+        }
     }
 }

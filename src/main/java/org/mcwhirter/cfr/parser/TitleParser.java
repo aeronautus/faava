@@ -9,8 +9,8 @@ public class TitleParser extends Parser<Title> {
 
     public TitleParser() {
         super(Tags.TITLE, Title.class);
-        //register(new ChapterParser());
-        register(new ChapterParser(), Title::addChapter);
+        //tag(new ChapterParser());
+        tag(new ChapterParser(), Title::addChapter);
     }
 
 }

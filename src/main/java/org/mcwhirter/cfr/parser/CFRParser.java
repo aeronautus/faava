@@ -9,8 +9,8 @@ public class CFRParser extends Parser<CFR> {
 
     public CFRParser() {
         super( Tags.CFRDOC, CFR.class);
-        //register(new TitleParser() );
-        register(new TitleParser(), CFR::addTitle);
+        //tag(new TitleParser() );
+        tag(new TitleParser(), CFR::addTitle);
     }
 
 }

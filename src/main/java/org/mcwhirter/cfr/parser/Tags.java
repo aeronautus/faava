@@ -12,6 +12,7 @@ public interface Tags {
     QName SUBCHAP = new QName("SUBCHAP");
     QName PART = new QName("PART");
     QName SUBPART = new QName("SUBPART");
+    QName SUBJGRP = new QName("SUBJGRP");
 
     QName SECTION = new QName("SECTION");
     QName SECTNO = new QName("SECTNO");
@@ -23,6 +24,12 @@ public interface Tags {
     QName HD = new QName("HD");
 
     QName RESERVED = new QName("RESERVED");
+
+    QName GPOTABLE = new QName("GPOTABLE");
+    QName BOXHD = new QName("BOXHD");
+    QName CHED = new QName("CHED");
+    QName ROW = new QName("ROW");
+    QName ENT = new QName("ENT");
 
 }
 

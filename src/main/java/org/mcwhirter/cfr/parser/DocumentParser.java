@@ -9,10 +9,10 @@ public class DocumentParser extends Parser<Document> {
 
     public DocumentParser() {
         super( Tags.CFRDOC, Document.class);
-        //register(new CFRParser(), (doc, cfr)->{
+        //tag(new CFRParser(), (doc, cfr)->{
             //doc.setCFR( cfr );
         //});
-        register(new CFRParser(), Document::setCFR);
+        tag(new CFRParser(), Document::setCFR);
     }
 
 }

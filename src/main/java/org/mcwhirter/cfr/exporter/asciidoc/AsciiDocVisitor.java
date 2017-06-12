@@ -9,14 +9,19 @@ import org.mcwhirter.cfr.exporter.BaseVisitor;
 import org.mcwhirter.cfr.exporter.Executable;
 import org.mcwhirter.cfr.exporter.gitbook.SummaryVisitor;
 import org.mcwhirter.cfr.model.Block;
+import org.mcwhirter.cfr.model.ColumnHeader;
 import org.mcwhirter.cfr.model.EmphasizedText;
 import org.mcwhirter.cfr.model.ListItem;
 import org.mcwhirter.cfr.model.OrderedList;
 import org.mcwhirter.cfr.model.Paragraph;
 import org.mcwhirter.cfr.model.Part;
+import org.mcwhirter.cfr.model.RowEntry;
 import org.mcwhirter.cfr.model.Section;
 import org.mcwhirter.cfr.model.Subchapter;
 import org.mcwhirter.cfr.model.Subpart;
+import org.mcwhirter.cfr.model.Table;
+import org.mcwhirter.cfr.model.TableHeader;
+import org.mcwhirter.cfr.model.TableRow;
 import org.mcwhirter.cfr.model.Text;
 
 /**
@@ -115,10 +120,10 @@ public class AsciiDocVisitor extends BaseVisitor {
             SummaryVisitor summary = new SummaryVisitor(partDir());
             part.accept(summary);
 
-            emit(dir, "README.md");
-            emit(dir, "book.json");
-            emit(dir, "styles/website.css");
-            emit(dir, ".gitignore");
+            emit(partDir(), "README.md");
+            emit(partDir(), "book.json");
+            emit(partDir(), "styles/website.css");
+            emit(partDir(), ".gitignore");
         });
     }
 
@@ -215,5 +220,53 @@ public class AsciiDocVisitor extends BaseVisitor {
     public void visit(EmphasizedText text) throws Exception {
         print("*" + text + "*");
         super.visit(text);
+    }
+
+
+    @Override
+    public void visit(Table table) throws Exception {
+        println();
+        if ( table.getHeader() != null ) {
+            println( "[cols=\"" + table.getHeader().getWidth() + "*.<\"]");
+        }
+        println("|===");
+        println();
+        super.visit(table);
+        println("|===");
+        println();
+    }
+
+    @Override
+    public void visit(TableHeader tableHeader) throws Exception {
+        HeaderRows rows = new HeaderRows(tableHeader);
+        for (HeaderRows.Row row : rows.getRows()) {
+            for (ColumnHeader col : row.getHeaders()) {
+                if (col.getWidth() > 1) {
+                    print(col.getWidth() + "+|");
+                } else {
+                    print("|");
+                }
+                println(inline(col.getContent()).trim());
+            }
+            println();
+        }
+
+        //super.visit(tableHeader);
+    }
+
+    @Override
+    public void visit(ColumnHeader columnHeader) throws Exception {
+        super.visit(columnHeader);
+    }
+
+    @Override
+    public void visit(TableRow tableRow) throws Exception {
+        super.visit(tableRow);
+        println();
+    }
+
+    @Override
+    public void visit(RowEntry rowEntry) throws Exception {
+        println("|" + inline(rowEntry.getContent()));
     }
 }

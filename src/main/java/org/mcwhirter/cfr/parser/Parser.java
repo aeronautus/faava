@@ -1,15 +1,17 @@
 package org.mcwhirter.cfr.parser;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.XMLEvent;
+
+import org.mcwhirter.cfr.model.Paragraph;
 
 /**
  * Created by bob on 5/31/17.
@@ -30,39 +32,62 @@ public abstract class Parser<T> {
         return this.type;
     }
 
-
-    protected <U> void register(Parser<U> parser, BiConsumer<T, U> consumer) {
-        this.handlers.put(parser.getTag(), new ParserHandler(parser, consumer));
+    protected <U> void tag(Parser<U> parser, BiConsumer<T, U> consumer) {
+        this.tagHandlers.put(parser.getTag(), new ParserHandler(parser, consumer));
     }
 
-    protected void register(QName tag, String methodName) {
-        register(tag, (obj, text)->{
-            try {
-                Method method = this.type.getMethod( methodName, String.class );
-                method.invoke( obj, text );
-            } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-                throw new RuntimeException(e);
-            }
+    protected void tag(QName tag, BiConsumer<T, String> consumer) {
+        this.tagHandlers.put(tag, new TextHandler<T>(consumer));
+    }
+
+    protected void attribute(String name, BiConsumer<T, String> consumer) {
+        this.attrHandlers.put(name, consumer);
+    }
+
+    protected void intAttribute(String name, BiConsumer<T, Integer> consumer) {
+        attribute(name, (obj, val) -> {
+            Integer intVal = Integer.parseInt(val);
+            consumer.accept(obj, intVal);
         });
     }
 
-    protected void register(QName tag, BiConsumer<T, String> consumer) {
-        this.handlers.put(tag, new TextHandler<T>(consumer));
+    protected void textContent(BiConsumer<T, Paragraph> consumer) {
+        this.textContentHandler = consumer;
     }
 
-    public T parse(XMLEventReader reader) throws XMLStreamException {
+    final public T parse(XMLEventReader reader) throws XMLStreamException {
+        return parse( null, reader);
+    }
+
+    public T parse(XMLEvent trigger, XMLEventReader reader) throws XMLStreamException {
         T obj = createObject();
+
+        if ( trigger != null && trigger.isStartElement() ) {
+            Iterator attrIter = trigger.asStartElement().getAttributes();
+            while ( attrIter.hasNext() ) {
+                Attribute attr = (Attribute) attrIter.next();
+                BiConsumer<T, String> consumer = this.attrHandlers.get(attr.getName().getLocalPart());
+                if (consumer != null) {
+                    consumer.accept(obj, attr.getValue());
+                }
+            }
+        }
+
+        if ( this.textContentHandler != null ) {
+            Paragraph content = new TextParser(null).parse(trigger, reader);
+            this.textContentHandler.accept(obj, content);
+            return obj;
+        }
 
         while (reader.hasNext()) {
             XMLEvent event = reader.nextEvent();
-
             if (event.isStartElement()) {
+
                 QName name = event.asStartElement().getName();
-                Handler<T> handler = this.handlers.get(name);
+                Handler<T> handler = this.tagHandlers.get(name);
                 if (handler != null) {
-                    handler.handle(obj, reader);
+                    handler.handle(obj, event, reader);
                 } else {
-                    //System.err.println("skip");
                     skip(reader);
                 }
             } else if (isComplete(event)) {
@@ -72,13 +97,6 @@ public abstract class Parser<T> {
 
         return obj;
     }
-
-    /*
-    protected <V> void handle(XMLEventReader reader, T object, ParserHandler<V,T> parserHandler) throws XMLStreamException {
-        V result = parserHandler.parser.parse(reader);
-        parserHandler.consumer.accept(object, result);
-    }
-    */
 
     public T createObject() {
         try {
@@ -117,7 +135,9 @@ public abstract class Parser<T> {
 
     private final QName tag;
 
-    private final Map<QName, Handler<T>> handlers = new HashMap<>();
+    private final Map<QName, Handler<T>> tagHandlers = new HashMap<>();
 
+    private final Map<String, BiConsumer<T, String>> attrHandlers = new HashMap<>();
 
+    private BiConsumer<T, Paragraph> textContentHandler;
 }

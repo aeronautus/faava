@@ -4,6 +4,7 @@ import java.util.function.BiConsumer;
 
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.events.XMLEvent;
 
 /**
  * Created by bob on 5/31/17.
@@ -14,7 +15,7 @@ class TextHandler<T> implements Handler<T> {
     }
 
     @Override
-    public void handle(T object, XMLEventReader reader) throws XMLStreamException {
+    public void handle(T object, XMLEvent trigger, XMLEventReader reader) throws XMLStreamException {
         String text = reader.getElementText();
         this.consumer.accept(object, text);
     }

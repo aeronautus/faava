@@ -8,16 +8,14 @@ import org.mcwhirter.cfr.visitor.Visitor;
 /**
  * Created by bob on 5/31/17.
  */
-public class Subpart implements BaseModel, Identified {
+public class SubjectGroup implements BaseModel {
 
-    public String id() {
-        return this.id;
+    public void setTitle(Paragraph title) {
+        this.title = title.asSimpleString();
     }
 
     public void setTitle(String title) {
-        int dashLoc = title.indexOf("—");
-        this.id = title.substring(8,dashLoc).trim();
-        this.title = title.substring(dashLoc+1).trim();
+        this.title = title;
     }
 
     public String getTitle() {
@@ -32,22 +30,12 @@ public class Subpart implements BaseModel, Identified {
         return this.sections;
     }
 
-    public void addSubjectGroup(SubjectGroup subjectGroup) {
-        this.subjectGroups.add( subjectGroup );
-    }
-
-    public List<SubjectGroup> getSubjectGroups() {
-        return this.subjectGroups;
-    }
-
     @Override
     public void accept(Visitor visitor) throws Exception {
         visitor.visit(this);
     }
 
-    private String id;
     private String title;
 
     private List<Section> sections = new ArrayList<>();
-    private List<SubjectGroup> subjectGroups = new ArrayList<>();
 }

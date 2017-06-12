@@ -14,3 +14,7 @@
 .markdown-section ol.lowerroman {
   list-style-type: lower-roman;
 }
+
+.markdown-section .valign-top {
+  vertical-align: top;
+}

@@ -9,7 +9,7 @@ public class SubChapterParser extends Parser<Subchapter> {
 
     public SubChapterParser() {
         super(Tags.SUBCHAP, Subchapter.class);
-        register(new PartParser(), Subchapter::addPart);
-        register(Tags.HD, Subchapter::setTitle);
+        tag(new PartParser(), Subchapter::addPart);
+        tag(Tags.HD, Subchapter::setTitle);
     }
 }

@@ -7,6 +7,7 @@ import org.mcwhirter.cfr.exporter.BaseVisitor;
 import org.mcwhirter.cfr.model.Document;
 import org.mcwhirter.cfr.model.Part;
 import org.mcwhirter.cfr.model.Section;
+import org.mcwhirter.cfr.model.SubjectGroup;
 import org.mcwhirter.cfr.model.Subpart;
 
 /**
@@ -48,9 +49,9 @@ public class SummaryVisitor extends BaseVisitor {
         println();
 
         context(part, () -> {
-            println("### " + part.id() + " " + part.getTitle() + "");
+            //println("### " + part.id() + " " + part.getTitle() + "");
             super.visit(part);
-            println();
+            //println();
         });
 
         Path summary = this.dir.resolve("SUMMARY.md");
@@ -64,10 +65,17 @@ public class SummaryVisitor extends BaseVisitor {
             return;
         }
         context(subpart, () -> {
-            println("#### " + subpart.id() + " " + subpart.getTitle() + "");
+            println("### " + subpart.id() + " " + subpart.getTitle() + "");
             super.visit(subpart);
             println();
         });
+    }
+
+    @Override
+    public void visit(SubjectGroup subjectGroup) throws Exception {
+        println("#### " + subjectGroup.getTitle() );
+        super.visit(subjectGroup);
+        println();
     }
 
     @Override

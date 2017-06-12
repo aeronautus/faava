@@ -9,8 +9,9 @@ public class SubpartParser extends Parser<Subpart> {
 
     public SubpartParser() {
         super(Tags.SUBPART, Subpart.class);
-        register(new SectionParser(), Subpart::addSection);
-        register(Tags.HD, Subpart::setTitle);
+        tag(new SectionParser(), Subpart::addSection);
+        tag(new SubjectGroupParser(), Subpart::addSubjectGroup);
+        tag(Tags.HD, Subpart::setTitle);
     }
 
 }
